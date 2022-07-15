@@ -3,5 +3,3 @@
 /log/*.log
 /pkg/
 /tmp/
-/test/dummy/log/*.log
-/test/dummy/tmp/
