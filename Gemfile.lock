@@ -2,7 +2,9 @@ PATH
   remote: .
   specs:
     kylas_engine (0.1.0)
+      pg
       rails (>= 7.0.2.3)
+      sprockets-rails
 
 GEM
   remote: https://rubygems.org/
@@ -179,9 +181,7 @@ PLATFORMS
 
 DEPENDENCIES
   kylas_engine!
-  pg
   rspec-rails (~> 5.0.0)
-  sprockets-rails
 
 BUNDLED WITH
    2.3.3
