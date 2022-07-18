@@ -1,0 +1,101 @@
+<div class='authentication-layout'>
+  <div class='kylas-background'></div>
+  <div class='content-wrapper'>
+    <div class='main-content'>
+      <div class='authentication-form-wrapper'>
+        <h1>Sign up for free</h1>
+        <div class='mb-4'>
+          <strong>
+            <span>Having an existing account.</span>
+            <%= link_to 'Sign in here', new_session_path(resource_name), class: 'link-primary' %>
+          </strong>
+        </div>
+        <%= render 'devise/shared/flash' %>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: {id: 'signUpForm'}) do |f| %>
+          <div class='form-group'>
+            <%= f.label 'Email ID', input_html: { class: 'form-label' } %>
+            <div class='text-field col-undefined'>
+              <div class='form-group' id='email'>
+                <div class='validate'>
+                  <%= f.email_field :email, autocomplete: 'off', placeholder: 'Email', id: 'input_email', class: 'form-control' %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% if resource.errors.any? && resource.errors.messages[:email].any? %>
+            <span class='error'>
+              Email
+              <%= resource.errors.messages[:email][0] %>
+            </span>
+          <% end %>
+
+          <div class='form-group'>
+            <%= f.label 'Name', :input_html => { :class => 'form-label' } %>
+            <div class='text-field col-undefined'>
+              <div class='form-group' id='lastName'>
+                <div class='validate'>
+                  <%= f.text_field :name, autocomplete: 'off', placeholder: 'Name', id: 'name', class: 'form-control' %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <% if resource.errors.any? && resource.errors.messages[:name].any? %>
+            <span class='error'>
+              Name
+              <%= resource.errors.messages[:name][0] %>
+            </span>
+          <% end %>
+
+          <div class='form-group'>
+            <%= f.label 'Password', :input_html => { :class => 'form-label' } %>
+            <div class='text-field col-undefined'>
+              <div class='form-group' id='password'>
+                <div class='validate'>
+                  <%= f.password_field :password, autocomplete: 'current-password', placeholder: 'Password', id: 'input_password', class: 'form-control form-control--password' %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <% if resource.errors.any? && resource.errors.messages[:password].any? %>
+            <span class='error'>
+              Password
+              <%= resource.errors.messages[:password][0] %>
+            </span>
+          <% end %>
+
+          <div class='form-group w-100 mb-0'>
+            <%= f.submit 'Sign Up For Free', id: 'loginBtn', class: 'btn btn-md w-100 mb-3 mt-auto btn-primary' %>
+          </div>
+          <p class='f-13 m-0 acknowledgement text-justify'>
+            By clicking on "Sign up for free" you agree to
+            our <a class='link-primary' href='https://www.kylas.io/terms-of-service' target='_blank'> terms</a>
+            and you acknowledge having read our
+            <a class='link-primary' href='https://www.kylas.io/privacy' target='_blank'> privacy policy</a>.
+          </p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function(){
+    $('#signUpForm').validate({
+      rules: {
+        'user[email]': {
+          required: true,
+          email: true
+        },
+        'user[name]': 'required',
+        'user[password]': 'required'
+      },
+
+      messages: {
+        'user[email]': 'Please enter valid email',
+        'user[name]': 'Please enter name',
+        'user[password]': 'Please enter password'
+      }
+    })
+  })
+</script>

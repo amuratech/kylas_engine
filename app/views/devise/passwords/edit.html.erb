@@ -1,0 +1,51 @@
+<div class='authentication-layout'>
+  <div class='kylas-background'></div>
+  <div class='content-wrapper'>
+    <div class='main-content'>
+      <div class='authentication-form-wrapper'>
+        <img alt='logo' class='logo' src='kylas_engine/logo.png'/>
+        <h2 class='h2 title'>Update your password</h2>
+        <p class='message last-child'>Please set a password so that you can log in.</p>
+        <%= render 'devise/shared/flash' %>
+        <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+          <%= f.hidden_field :reset_password_token %>
+          <div class='form-group'>
+            <%= f.label 'New Password', :input_html => { :class => 'form-label' } %>
+            <div class='text-field col-undefined'>
+              <div class='form-group' id='password'>
+                <div class='validate'>
+                  <%= f.password_field :password, autocomplete: 'current-password', placeholder: 'Password', id: 'password', class: 'form-control form-control--password' %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% if resource.errors.any? && resource.errors.messages[:password].any? %>
+            <span class='error'>
+              Password
+              <%= resource.errors.messages[:password][0].downcase %>
+            </span>
+          <% end %>
+          <div class='form-group'>
+            <%= f.label 'Confirm Password', :input_html => { :class => 'form-label' } %>
+            <div class='text-field col-undefined'>
+              <div class='form-group' id='password'>
+                <div class='validate'>
+                  <%= f.password_field :password_confirmation, autocomplete: 'current-password', placeholder: 'Password', id: 'input_reTypePassword', class: 'form-control form-control--password' %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% if resource.errors.any? && resource.errors.messages[:password_confirmation,].any? %>
+            <span class='error'>
+              Confirm Password
+              <%= resource.errors.messages[:password_confirmation][0].downcase %>
+            </span>
+          <% end %>
+          <div class='actions'>
+            <%= f.submit 'Reset Password', class: 'btn btn-md w-100 mb-3 mt-auto btn-primary' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="authentication-layout">
+  <div class="kylas-background"></div>
+  <div class="content-wrapper">
+    <div class="main-content">
+      <div class="authentication-form-wrapper">
+        <%= image_tag 'kylas_engine/logo.png', alt: "Kylas Logo" %>
+        <h1>Activate your Account</h1>
+        <%= image_tag 'kylas_engine/sign-in.svg', class: 'sign-in__placeholder', alt: "sign in placeholder" %>
+        <p class="sign-in__mobile-help-text">For better user experience, sign in from a desktop/laptop browser.</p>
+        <div class="mb-4">
+          <strong class="signup_link">
+            <span>Please set up your password and confirm your account</span>
+          </strong>
+        </div>
+        <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post, id: 'setPasswordForm' }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+          <%= hidden_field_tag :confirmation_token,@confirmation_token %>
+          <% if @requires_password %>
+            <div class="form-group">
+              <%= f.label :password, :input_html => { :class => 'form-label' } %>
+              <%= f.password_field :password, placeholder: "Password", tabindex: "1", autocomplete: "off", required: "required", class: 'form-control', autofocus: true %>
+            </div>
+            <div class="form-group">
+              <%= f.label :password_confirmation, :input_html => { :class => 'form-label' } %>
+              <%= f.password_field :password_confirmation, placeholder: "Password Confirmation", tabindex: "2", autocomplete: "off", required: "required", class: 'form-control' %>
+            </div>
+            <div class="form-group actions mt-4">
+              <%= f.submit "Activate", class: 'btn btn-md w-100 mb-3 mt-auto btn-primary' %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function(){
+    $('#setPasswordForm').validate({
+      rules: {
+        'user[password]': 'required',
+        'user[password_confirmation]': {
+          required: true,
+          equalTo: '#user_password'
+        }
+      },
+
+      messages: {
+        'user[password]': 'Please enter password',
+        'user[password_confirmation]': {
+          required: 'Please enter password confirmation',
+          equalTo: "Password confirmation doesn't match"
+        }
+      }
+    })
+  })
+</script>

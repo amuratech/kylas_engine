@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28" height="22" viewBox="0 0 28 22">
+  <defs>
+    <clipPath id="clip-Ic_Logo">
+      <rect width="28" height="22"/>
+    </clipPath>
+  </defs>
+  <g id="Ic_Logo" clip-path="url(#clip-Ic_Logo)">
+    <g id="Group_12494" data-name="Group 12494" transform="translate(0 0.063)">
+      <g id="logo" transform="translate(0 0)">
+        <path id="Path_11" data-name="Path 11" d="M472.21,621.874h-3.084a1.443,1.443,0,1,1,0-2.885h2.457l-7.811-15.624-3.52,7.042,4.091,7.938.008.016a2.427,2.427,0,0,1-2.171,3.512h-6.845a2.5,2.5,0,0,1-2.234-3.614l3.916-7.833-1.119-2.171-6.373,12.818a1.443,1.443,0,1,1-2.583-1.284l6.777-13.63a2.427,2.427,0,0,1,4.339-.012l.558,1.083,2.924-5.848a2.5,2.5,0,0,1,4.468,0l8.438,16.879a2.5,2.5,0,0,1-2.234,3.614m-13.557-8.27-2.692,5.385h5.467Z" transform="translate(-446.79 -600)" fill="#0176ff"/>
+      </g>
+    </g>
+  </g>
+</svg>

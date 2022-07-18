@@ -25,5 +25,11 @@ Gem::Specification.new do |spec|
     Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   end
 
+  spec.add_dependency 'devise'
+  spec.add_dependency 'pg'
   spec.add_dependency 'rails', '>= 7.0.2.3'
+  spec.add_dependency 'sassc-rails'
+  spec.add_dependency 'sprockets-rails'
+
+  spec.add_development_dependency 'rspec-rails', '~> 5.0.0'
 end

@@ -1,0 +1,99 @@
+<%= csrf_meta_tags %>
+<div class='authentication-layout'>
+  <div class='kylas-background'></div>
+
+  <div class='content-wrapper'>
+    <div class='main-content'>
+      <div class='authentication-form-wrapper'>
+        <%= image_tag 'kylas_engine/logo.png', class: 'logo', alt: 'logo' %>
+        <h1>Sign in to your account</h1>
+        <%= image_tag 'kylas_engine/sign-in.svg', class: 'sign-in__placeholder', alt: 'sign in placeholder' %>
+        <p class='sign-in__mobile-help-text'>For better user experience, sign in from a desktop/laptop browser.</p>
+        <div class='mb-4'>
+          <strong class='signup_link'>
+            <span>Don't have an account?</span>
+            <%= link_to 'Sign up here', new_registration_path(resource_name), class: 'link-primary' %>
+          </strong>
+        </div>
+        <%= render 'devise/shared/flash' %>
+        <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {id: 'signInForm'}) do |f| %>
+          <div class='form-group'>
+            <%= f.label 'Email ID', input_html: { class: 'form-label' } %>
+            <div class='text-field col-undefined'>
+              <div class='form-group' id='email'>
+                <div class='validate'>
+                  <%= f.email_field :email, autocomplete: 'off', placeholder: 'Email', id: 'input_email', class: 'form-control' %>
+                  <i class='fas fa-circle'></i>
+                  <i class='password-icon fas fa-eye-slash'></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% if resource.errors.any? && resource.errors.messages[:email].any? %>
+            <span class='error'>
+              Email
+              <%= resource.errors.messages[:email][0] %>
+            </span>
+          <% end %>
+          <div class='form-group'>
+            <%= f.label 'Password', :input_html => { :class => 'form-label' } %>
+            <div class='text-field col-undefined'>
+              <div class='form-group' id='password'>
+                <div class='validate'>
+                  <%= f.password_field :password, autocomplete: 'current-password', placeholder: 'Password', id: 'input_password', class: 'form-control form-control--password' %>
+                  <i class='fas fa-circle'></i>
+                  <i class='password-icon fas fa-eye'></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% if resource.errors.any? && resource.errors.messages[:password].any? %>
+            <span class='error'>
+              Password
+              <%= resource.errors.messages[:password][0] %>
+            </span>
+          <% end %>
+          <div class='loggedin-forgot-password-link-wrapper'>
+            <div class='custom-control custom-checkbox custom-control-inline'>
+              <input class='custom-control-input' id='customCheckInline1' name='rememberMe' type='checkbox'></input>
+              <label class='custom-control-label' for='customCheckInline1'>Keep me logged in</label>
+            </div>
+            <%= link_to 'Forgot Password?', new_password_path(resource_name) %>
+          </div>
+          <div class='actions'></div>
+          <%= f.submit 'Sign in', id: 'loginBtn', class: 'btn btn-md w-100 mb-3 mt-auto btn-primary' %>
+        <% end %>
+        <div class='bottom-links'>
+          <ul class='support-links'>
+            <li>
+              <a href='https://www.kylas.io/contact' target='_blank'>Contact Us</a>
+            </li>
+            <li class='separator'></li>
+            <li>
+              <a href='https://www.kylas.io/privacy' target='_blank'>Privacy Policy</a>
+            </li>
+            <li class='separator'></li>
+            <li>
+              <a href='https://support.kylas.io' target='_blank'>Support</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function(){
+    $('#signInForm').validate({
+      rules: {
+        'user[email]': 'required',
+        'user[password]': 'required'
+      },
+
+      messages: {
+        'user[email]': 'Please enter valid email',
+        'user[password]': 'Please enter password'
+      }
+    })
+  })
+</script>
