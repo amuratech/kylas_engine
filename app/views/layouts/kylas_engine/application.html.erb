@@ -5,11 +5,21 @@
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
-  <%= stylesheet_link_tag    "kylas_engine/application", media: "all" %>
+  <%= stylesheet_link_tag "kylas_engine/application", media: "all" %>
+  <%= javascript_include_tag "kylas_engine/application" %>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<%= yield %>
-
+  <% if user_signed_in? %>
+    <div class="d-flex flex-column h-100" id="app">
+      <div class="d-flex flex-column h-100">
+        <%= render 'shared/navbar' %>
+      </div>
+    </div>
+  <% else %>
+    <%= yield %>
+  <% end %>
 </body>
 </html>

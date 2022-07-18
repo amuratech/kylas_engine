@@ -1,0 +1,24 @@
+@import 'kylas_engine/bootstrap-5.0.2.min';
+@import 'kylas_engine/dashboard';
+@import 'kylas_engine/authentication';
+@import 'kylas_engine/pre-login';
+@import 'kylas_engine/header';
+@import 'kylas_engine/mailer';
+@import 'kylas_engine/navbar';
+@import 'kylas_engine/user-profile-menu';
+
+body {
+  font-family: 'Rubik', sans-serif;
+}
+
+.btn-close {
+  cursor: pointer;
+}
+
+.form-control:focus {
+  color: #2e384d;
+  background-color: #fff;
+  border-color: #0176FF;
+  outline: 0;
+  box-shadow: none;
+}

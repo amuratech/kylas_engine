@@ -1,0 +1,26 @@
+
+<% flash.each do |name, msg| %>
+  <% case name.to_s %>
+    <% when 'success' %>
+      <div class="alert alert-success alert-dismissible fade show">
+        <%== msg %>
+        <span class="btn-close" data-bs-dismiss="alert" aria-label="Close"></span>
+      </div>
+    <% when 'danger' %>
+      <div class="alert alert-danger alert-dismissible fade show">
+        <%== msg %>
+        <span class="btn-close" data-bs-dismiss="alert" aria-label="Close"></span>
+      </div>
+    <% when 'alert' %>
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <%== msg %>
+        <span class="btn-close" data-bs-dismiss="alert" aria-label="Close"></span>
+      </div>
+    <% when 'notice' %>
+      <div class="alert alert-info alert-dismissible fade show">
+        <%== msg %>
+      <span class="btn-close" data-bs-dismiss="alert" aria-label="Close"></span>
+      </div>
+  <% end %>
+<% end %>
+<% flash.clear %>

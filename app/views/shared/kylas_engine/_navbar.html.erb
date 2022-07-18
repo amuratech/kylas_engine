@@ -1,0 +1,41 @@
+<header>
+  <nav class='navbar navbar-expand bg-white pb-0 pt-0'>
+    <div class='header-top'>
+      <nav class='navbar navbar-expand-lg navbar-light pb-0 pl-0'>
+        <ul class='navbar-nav mr-auto'>
+          <% if (tenant = current_tenant) %>
+            <li class='nav-item <%= active_class('tenants') %>'>
+              <div class='left-navbar__side-nav__item-section'>
+                <%= link_to 'API Keys', edit_tenant_path(tenant), class: 'nav-link pl-0' %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </nav>
+      <div id="profile" class='header-top-right'>
+        <div class='dropdown dropdown-user ml-2'>
+          <button type="button" class="btn p-0 dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+          <%= create_avatar_name %>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
+            <%= link_to 'Logout', destroy_user_session_path, { method: :delete, class: 'dropdown-item cursor-pointer' } %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<main class='main-content min-height-0 position-relative main-parent-wrapper'>
+  <div class='dashboard-layout'>
+    <div class='dashboard-layout__bucket'>
+      <%= yield %>
+    </div>
+  </div>
+</main>
+<script>
+  $(function(){
+    if(window.top != window.self){
+      $('#profile').hide();
+    }
+  });
+</script>
