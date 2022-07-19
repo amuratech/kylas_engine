@@ -41,6 +41,52 @@ module KylasEngine
       )
     end
 
+    def update_users_and_tenants_details
+      fetch_and_save_kylas_user_id
+      fetch_and_save_kylas_tenant_id
+    end
+
+    def fetch_and_save_kylas_user_id
+      return if kylas_access_token.blank?
+
+      begin
+        response = KylasEngine::UserDetails.new(user: self).call
+        update!(kylas_user_id: response.dig(:data, 'id')) if response[:success]
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error "#{self.class} - Exception - #{e}"
+        Rails.logger.error "User id - #{id}"
+      end
+    end
+
+    def fetch_and_save_kylas_tenant_id
+      return if kylas_access_token.blank?
+
+      begin
+        response = KylasEngine::TenantDetails.new(user: self).call
+        if response[:success]
+          tenant.update!(kylas_tenant_id: response.dig(:data, 'id'), timezone: response.dig(:data, 'timezone'))
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error "#{self.class} - Exception - #{e}"
+        Rails.logger.error "User id - #{id}"
+      end
+    end
+
+    def fetch_access_token
+      return kylas_access_token if access_token_valid?
+
+      response = KylasEngine::GetAccessToken.new(kylas_refresh_token: kylas_refresh_token).call
+
+      return unless response[:success]
+
+      update_tokens_details!(response)
+      kylas_access_token
+    end
+
+    def access_token_valid?
+      (kylas_access_token_expires_at.to_i > DateTime.now.to_i)
+    end
+
     def password_match?
       errors[:password] << I18n.t('errors.messages.blank') if password.blank?
       errors[:password_confirmation] << I18n.t('errors.messages.blank') if password_confirmation.blank?
