@@ -22,7 +22,7 @@ module KylasEngine
         flash[:alert] = t('something_went_wrong')
       end
 
-      redirect_to root_path
+      redirect_to dashboard_help_path
     end
 
     private

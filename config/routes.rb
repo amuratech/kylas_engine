@@ -8,5 +8,7 @@ KylasEngine::Engine.routes.draw do
 
   resources :tenants, only: %i[edit update]
 
+  get 'dashboard/help', to: 'dashboards#help'
+
   get 'kylas-auth', to: 'kylas_auth#authenticate'
 end
