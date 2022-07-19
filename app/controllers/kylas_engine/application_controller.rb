@@ -9,5 +9,11 @@ module KylasEngine
 
       current_user.tenant
     end
+
+    def after_sign_in_path_for(resource)
+      return session.delete(:previous_url) if session[:previous_url].present?
+
+      root_path
+    end
   end
 end
