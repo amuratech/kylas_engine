@@ -6,9 +6,9 @@ KylasEngine::Engine.routes.draw do
     confirmations: 'confirmations'
   }
 
-  devise_scope :user do
-    root 'devise/sessions#new'
-  end
-
   resources :tenants, only: %i[edit update]
+
+  get 'dashboard/help', to: 'dashboards#help'
+
+  get 'kylas-auth', to: 'kylas_auth#authenticate'
 end

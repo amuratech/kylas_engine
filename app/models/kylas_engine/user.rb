@@ -31,6 +31,16 @@ module KylasEngine
       update(p)
     end
 
+    def update_tokens_details!(response = {})
+      return if response.blank?
+
+      update(
+        kylas_access_token: response[:access_token],
+        kylas_refresh_token: response[:refresh_token],
+        kylas_access_token_expires_at: Time.at(DateTime.now.to_i + response[:expires_in])
+      )
+    end
+
     def password_match?
       errors[:password] << I18n.t('errors.messages.blank') if password.blank?
       errors[:password_confirmation] << I18n.t('errors.messages.blank') if password_confirmation.blank?
