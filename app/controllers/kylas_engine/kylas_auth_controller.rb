@@ -13,6 +13,7 @@ module KylasEngine
         response = KylasEngine::ExchangeCode.new(authorization_code: authorization_code).call
         if response[:success]
           current_user.update_tokens_details!(response)
+          current_user.update_users_and_tenants_details
           session.delete(:previous_url) if auth_request?(session[:previous_url])
           flash[:success] = t('kylas_auth.successfully_installed')
         else
