@@ -11,7 +11,7 @@ module KylasEngine
     private
 
     def generate_webhook_api_key
-      self.webhook_api_key ||= SecureRandom.uuid
+      self.webhook_api_key = SecureRandom.uuid if webhook_api_key.blank?
     end
   end
 end
