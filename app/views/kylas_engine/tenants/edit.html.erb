@@ -1,0 +1,27 @@
+<%= render 'devise/shared/flash' %>
+<%= form_for(@tenant, url: tenant_path(@tenant), html: { class: 'form-horizontal' }) do |f| %>
+  <div class='form-group mt-3'>
+    <%= f.label :webhook_api_key, 'App API Key', input_html: { class: 'form-label' } %>
+    <div class='h4'>
+      <%= @tenant.webhook_api_key ? @tenant.webhook_api_key : t('tenants.generate_webhook_api_key') %>
+    </div>
+    <div class='small'>You can use this API Key for your Webhooks in Kylas</div>
+  </div>
+  <hr/>
+  <div class='form-group mt-3'>
+    <%= f.label :kylas_api_key, 'Kylas API Key', input_html: { class: 'form-label' } %>
+    <% permit_only_tenant = current_user.is_tenant? %>
+
+    <% if permit_only_tenant %>
+      <%= f.text_field :kylas_api_key, autocomplete: 'off', placeholder: 'Kylas API Key', class: 'form-control' %>
+    <% else %>
+      <div class='h4'><%= @tenant.kylas_api_key.presence || t('tenants.ask_tenant_to_add_api_key') %></div>
+    <% end %>
+  </div>
+
+  <% if permit_only_tenant %>
+    <div class='form-group mt-3'>
+      <%= f.submit 'Save', id: 'submitBtn', class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+<% end %>

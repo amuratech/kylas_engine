@@ -46,32 +46,6 @@ module KylasEngine
       fetch_and_save_kylas_tenant_id
     end
 
-    def fetch_and_save_kylas_user_id
-      return if kylas_access_token.blank?
-
-      begin
-        response = KylasEngine::UserDetails.new(user: self).call
-        update!(kylas_user_id: response.dig(:data, 'id')) if response[:success]
-      rescue ActiveRecord::RecordInvalid => e
-        Rails.logger.error "#{self.class} - Exception - #{e}"
-        Rails.logger.error "User id - #{id}"
-      end
-    end
-
-    def fetch_and_save_kylas_tenant_id
-      return if kylas_access_token.blank?
-
-      begin
-        response = KylasEngine::TenantDetails.new(user: self).call
-        if response[:success]
-          tenant.update!(kylas_tenant_id: response.dig(:data, 'id'), timezone: response.dig(:data, 'timezone'))
-        end
-      rescue ActiveRecord::RecordInvalid => e
-        Rails.logger.error "#{self.class} - Exception - #{e}"
-        Rails.logger.error "User id - #{id}"
-      end
-    end
-
     def fetch_access_token
       return kylas_access_token if access_token_valid?
 
@@ -137,6 +111,32 @@ module KylasEngine
 
       self.is_tenant = true
       self.tenant = Tenant.create
+    end
+
+    def fetch_and_save_kylas_user_id
+      return if kylas_access_token.blank?
+
+      begin
+        response = KylasEngine::UserDetails.new(user: self).call
+        update!(kylas_user_id: response.dig(:data, 'id')) if response[:success]
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error "#{self.class} - Exception - #{e}"
+        Rails.logger.error "User id - #{id}"
+      end
+    end
+
+    def fetch_and_save_kylas_tenant_id
+      return if kylas_access_token.blank?
+
+      begin
+        response = KylasEngine::TenantDetails.new(user: self).call
+        if response[:success]
+          tenant.update!(kylas_tenant_id: response.dig(:data, 'id'), timezone: response.dig(:data, 'timezone'))
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error "#{self.class} - Exception - #{e}"
+        Rails.logger.error "User id - #{id}"
+      end
     end
   end
 end

@@ -10,12 +10,17 @@
               </div>
             </li>
           <% end %>
+          <li class='nav-item <%= active_class('dashboards') %>'>
+            <div class='left-navbar__side-nav__item-section'>
+              <%= link_to 'Help', dashboard_help_path, class: 'nav-link pl-0' %>
+            </div>
+          </li>
         </ul>
       </nav>
       <div id="profile" class='header-top-right'>
         <div class='dropdown dropdown-user ml-2'>
           <button type="button" class="btn p-0 dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-          <%= create_avatar_name %>
+            <%= create_avatar_name %>
           </button>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
             <%= link_to 'Logout', destroy_user_session_path, { method: :delete, class: 'dropdown-item cursor-pointer' } %>

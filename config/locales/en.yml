@@ -1,8 +1,14 @@
 en:
   something_went_wrong: 'Something went wrong!'
+  dont_have_permission: "You don't have permission to perform action."
   users:
     deactivated_user_log_in_message: 'Sorry, this account has been deactivated.'
   kylas_auth:
     successfully_installed: 'Application installed successfully.'
     facing_problem: 'We are facing problem while installing app! Please try again'
     code_blank: 'Authorization code is blank.'
+  tenants:
+    api_key_updated: 'Kylas API key updated successfully.'
+    failed_to_update: 'Kylas API key failed to update.'
+    generate_webhook_api_key: 'We generate webhook api key which can be use for your webhooks in Kylas. Please add Kylas API Key.'
+    ask_tenant_to_add_api_key: "Tenant didn't add the Kylas API Key yet. Ask to tenant!"
