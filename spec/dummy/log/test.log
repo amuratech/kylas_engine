@@ -1,0 +1,1857 @@
+  [1m[35m (84.4ms)[0m  [1m[35mCREATE DATABASE "dummy_test" ENCODING = 'unicode'[0m
+  [1m[35m (5.9ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (3.6ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.8ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2735718569030447490)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateKylasEngineUsers (20220717070933)
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (7.8ms)[0m  [1m[35mCREATE TABLE "kylas_engine_users" ("id" bigserial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp(6), "remember_created_at" timestamp(6), "confirmation_token" character varying, "confirmed_at" timestamp(6), "confirmation_sent_at" timestamp(6), "unconfirmed_email" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "is_tenant" boolean DEFAULT FALSE, "kylas_access_token" character varying, "kylas_refresh_token" character varying, "kylas_access_token_expires_at" timestamp(6), "kylas_user_id" character varying, "active" boolean DEFAULT FALSE)[0m
+  [1m[35m (2.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_kylas_engine_users_on_email" ON "kylas_engine_users" ("email")[0m
+  [1m[35m (2.2ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_kylas_engine_users_on_reset_password_token" ON "kylas_engine_users" ("reset_password_token")[0m
+  [1m[35m (2.1ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_kylas_engine_users_on_confirmation_token" ON "kylas_engine_users" ("confirmation_token")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (1.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20220717070933"]]
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreateKylasEngineTenants (20220717074229)
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (4.2ms)[0m  [1m[35mCREATE TABLE "kylas_engine_tenants" ("id" bigserial primary key, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.8ms)[0m  [1m[35mALTER TABLE "kylas_engine_users" ADD "tenant_id" bigint[0m
+  [1m[35m (2.0ms)[0m  [1m[35mCREATE INDEX "index_kylas_engine_users_on_tenant_id" ON "kylas_engine_users" ("tenant_id")[0m
+  [1m[35m (4.0ms)[0m  [1m[35mALTER TABLE "kylas_engine_users" ADD CONSTRAINT "fk_rails_81b093949b"
+FOREIGN KEY ("tenant_id")
+  REFERENCES "kylas_engine_tenants" ("id")
+[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.7ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20220717074229"]]
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT[0m
+Migrating to AddKylasTenantIdToTenants (20220719094504)
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (2.9ms)[0m  [1m[35mALTER TABLE "kylas_engine_tenants" ADD "kylas_api_key" character varying[0m
+  [1m[35m (0.6ms)[0m  [1m[35mALTER TABLE "kylas_engine_tenants" ADD "webhook_api_key" character varying[0m
+  [1m[35m (0.6ms)[0m  [1m[35mALTER TABLE "kylas_engine_tenants" ADD "kylas_tenant_id" bigint[0m
+  [1m[35m (0.9ms)[0m  [1m[35mALTER TABLE "kylas_engine_tenants" ADD "timezone" character varying DEFAULT 'Asia/Calcutta'[0m
+  [1m[35m (1.1ms)[0m  [1m[35mALTER TABLE "kylas_engine_users" DROP COLUMN "kylas_user_id"[0m
+  [1m[35m (0.7ms)[0m  [1m[35mALTER TABLE "kylas_engine_users" ADD "kylas_user_id" bigint[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.6ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20220719094504"]]
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.8ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (1.0ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "test"], ["created_at", "2022-07-19 16:20:50.620256"], ["updated_at", "2022-07-19 16:20:50.620256"]]
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.7ms)[0m  [1m[34mSELECT pg_advisory_unlock(2735718569030447490)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (39.7ms)[0m  [1m[35mDROP DATABASE IF EXISTS "dummy_test"[0m
+  [1m[35m (35.7ms)[0m  [1m[35mCREATE DATABASE "dummy_test" ENCODING = 'unicode'[0m
+  [1m[35mSQL (0.5ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "kylas_engine_tenants" CASCADE[0m
+  [1m[35m (8.1ms)[0m  [1m[35mCREATE TABLE "kylas_engine_tenants" ("id" bigserial primary key, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "kylas_api_key" character varying, "webhook_api_key" character varying, "kylas_tenant_id" bigint, "timezone" character varying DEFAULT 'Asia/Calcutta')[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "kylas_engine_users" CASCADE[0m
+  [1m[35m (6.1ms)[0m  [1m[35mCREATE TABLE "kylas_engine_users" ("id" bigserial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp(6), "remember_created_at" timestamp(6), "confirmation_token" character varying, "confirmed_at" timestamp(6), "confirmation_sent_at" timestamp(6), "unconfirmed_email" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "is_tenant" boolean DEFAULT FALSE, "kylas_access_token" character varying, "kylas_refresh_token" character varying, "kylas_access_token_expires_at" timestamp(6), "active" boolean DEFAULT FALSE, "tenant_id" bigint, "kylas_user_id" bigint)[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_kylas_engine_users_on_confirmation_token" ON "kylas_engine_users" ("confirmation_token")[0m
+  [1m[35m (1.9ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_kylas_engine_users_on_email" ON "kylas_engine_users" ("email")[0m
+  [1m[35m (1.9ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_kylas_engine_users_on_reset_password_token" ON "kylas_engine_users" ("reset_password_token")[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE INDEX "index_kylas_engine_users_on_tenant_id" ON "kylas_engine_users" ("tenant_id")[0m
+  [1m[35m (3.2ms)[0m  [1m[35mALTER TABLE "kylas_engine_users" ADD CONSTRAINT "fk_rails_81b093949b"
+FOREIGN KEY ("tenant_id")
+  REFERENCES "kylas_engine_tenants" ("id")
+[0m
+  [1m[35m (4.0ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.9ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20220719094504)[0m
+  [1m[35m (4.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.8ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "test"], ["created_at", "2022-07-19 16:20:59.061088"], ["updated_at", "2022-07-19 16:20:59.061088"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.5ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "schema_sha1"], ["value", "45dc85f17722c31e34419ec4708857c4f485244c"], ["created_at", "2022-07-19 16:20:59.070823"], ["updated_at", "2022-07-19 16:20:59.070823"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2735718569030447490)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateKylasEngineUsers (20220717070933)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE TABLE "kylas_engine_users" ("id" bigserial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp(6), "remember_created_at" timestamp(6), "confirmation_token" character varying, "confirmed_at" timestamp(6), "confirmation_sent_at" timestamp(6), "unconfirmed_email" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "is_tenant" boolean DEFAULT FALSE, "kylas_access_token" character varying, "kylas_refresh_token" character varying, "kylas_access_token_expires_at" timestamp(6), "kylas_user_id" character varying, "active" boolean DEFAULT FALSE)[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_advisory_unlock(2735718569030447490)[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2735718569030447490)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateKylasEngineUsers (20220717070933)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE TABLE "kylas_engine_users" ("id" bigserial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp(6), "remember_created_at" timestamp(6), "confirmation_token" character varying, "confirmed_at" timestamp(6), "confirmation_sent_at" timestamp(6), "unconfirmed_email" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "is_tenant" boolean DEFAULT FALSE, "kylas_access_token" character varying, "kylas_refresh_token" character varying, "kylas_access_token_expires_at" timestamp(6), "kylas_user_id" character varying, "active" boolean DEFAULT FALSE)[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT pg_advisory_unlock(2735718569030447490)[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2735718569030447490)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateKylasEngineUsers (20220717070933)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE TABLE "kylas_engine_users" ("id" bigserial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp(6), "remember_created_at" timestamp(6), "confirmation_token" character varying, "confirmed_at" timestamp(6), "confirmation_sent_at" timestamp(6), "unconfirmed_email" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "name" character varying, "is_tenant" boolean DEFAULT FALSE, "kylas_access_token" character varying, "kylas_refresh_token" character varying, "kylas_access_token_expires_at" timestamp(6), "kylas_user_id" character varying, "active" boolean DEFAULT FALSE)[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_advisory_unlock(2735718569030447490)[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.8ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.7ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.7ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (1.0ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (1.0ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (1.1ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.7ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 17:58:26.100461"], ["updated_at", "2022-07-19 17:58:26.100461"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 2087], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 1851], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (1.0ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-1@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 17:58:26.111898"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 17:58:26.111745"], ["updated_at", "2022-07-19 17:58:26.111745"], ["name", "user-name-1"], ["is_tenant", false], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 1], ["kylas_user_id", 1851]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 4.6ms | Allocations: 1832)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 23.8ms
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.5ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 17:59:43.277202"], ["updated_at", "2022-07-19 17:59:43.277202"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 5414], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 8920], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.7ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-1@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 17:59:43.286914"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 17:59:43.286783"], ["updated_at", "2022-07-19 17:59:43.286783"], ["name", "user-name-1"], ["is_tenant", false], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 2], ["kylas_user_id", 8920]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 2.5ms | Allocations: 1093)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 214.5ms
+Delivered mail 62d6f10f8fdfe_188a9247c1528e@shyam-selldo.mail (8.0ms)
+Date: Tue, 19 Jul 2022 23:29:43 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-1@sample.com
+Message-ID: <62d6f10f8fdfe_188a9247c1528e@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-1!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-1!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-1@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=q9y7xWY-yettoi5gHwTg">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.6ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 17:59:43.593792"], ["updated_at", "2022-07-19 17:59:43.594320"], ["id", 2]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.8ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:08:24.516090"], ["updated_at", "2022-07-19 18:08:24.516090"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 8398], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (1.0ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 4504], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (1.1ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-1@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:08:24.531422"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:08:24.531163"], ["updated_at", "2022-07-19 18:08:24.531163"], ["name", "user-name-1"], ["is_tenant", false], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 3], ["kylas_user_id", 4504]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 2.3ms | Allocations: 1093)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 178.0ms
+Delivered mail 62d6f318c8e0e_19280247c75989@shyam-selldo.mail (6.5ms)
+Date: Tue, 19 Jul 2022 23:38:24 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-1@sample.com
+Message-ID: <62d6f318c8e0e_19280247c75989@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-1!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-1!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-1@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=Sh9n7sM5rynQwi9CS9jL">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:08:24.826349"], ["updated_at", "2022-07-19 18:08:24.826737"], ["id", 3]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.5ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:11:19.014778"], ["updated_at", "2022-07-19 18:11:19.014778"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 8681], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 2459], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.4ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.6ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-1@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:11:19.065210"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:11:19.065061"], ["updated_at", "2022-07-19 18:11:19.065061"], ["name", "user-name-1"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 4], ["kylas_user_id", 2459]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 2.4ms | Allocations: 1091)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 181.7ms
+Delivered mail 62d6f3c73e3e7_19694279c858a5@shyam-selldo.mail (6.8ms)
+Date: Tue, 19 Jul 2022 23:41:19 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-1@sample.com
+Message-ID: <62d6f3c73e3e7_19694279c858a5@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-1!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-1!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-1@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=know-KSSw6sx_2NbBwKD">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:11:19.258786"], ["updated_at", "2022-07-19 18:11:19.259153"], ["id", 4]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:11:19.266828"], ["updated_at", "2022-07-19 18:11:19.266828"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 9358], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-2@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 3875], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.3ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.5ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-2@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:11:19.273983"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:11:19.273918"], ["updated_at", "2022-07-19 18:11:19.273918"], ["name", "user-name-2"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 5], ["kylas_user_id", 3875]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 0.3ms | Allocations: 141)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 1.4ms
+Delivered mail 62d6f3c744047_19694279c859df@shyam-selldo.mail (2.2ms)
+Date: Tue, 19 Jul 2022 23:41:19 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-2@sample.com
+Message-ID: <62d6f3c744047_19694279c859df@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-2!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-2!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-2@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=yLcKsB3Ruajy37mBDaA4">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:11:19.280195"], ["updated_at", "2022-07-19 18:11:19.280482"], ["id", 5]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 3875], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.5ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:13:04.515261"], ["updated_at", "2022-07-19 18:13:04.515261"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 3935], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 3240], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.3ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.7ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-1@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:13:04.530958"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:13:04.530823"], ["updated_at", "2022-07-19 18:13:04.530823"], ["name", "user-name-1"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 6], ["kylas_user_id", 3240]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 2.3ms | Allocations: 1091)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 174.2ms
+Delivered mail 62d6f430ae19a_198c6279c407b4@shyam-selldo.mail (6.6ms)
+Date: Tue, 19 Jul 2022 23:43:04 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-1@sample.com
+Message-ID: <62d6f430ae19a_198c6279c407b4@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-1!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-1!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-1@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=zsK6jzwgJQ2QD3dMLkKz">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:13:04.716678"], ["updated_at", "2022-07-19 18:13:04.717048"], ["id", 6]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:13:04.723906"], ["updated_at", "2022-07-19 18:13:04.723906"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 204], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-2@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 9114], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.3ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.5ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-2@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:13:04.730683"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:13:04.730627"], ["updated_at", "2022-07-19 18:13:04.730627"], ["name", "user-name-2"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 7], ["kylas_user_id", 9114]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 0.3ms | Allocations: 141)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 1.4ms
+Delivered mail 62d6f430b36ff_198c6279c408eb@shyam-selldo.mail (2.0ms)
+Date: Tue, 19 Jul 2022 23:43:04 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-2@sample.com
+Message-ID: <62d6f430b36ff_198c6279c408eb@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-2!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-2!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-2@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=4JjBmKZ8xazf6dbvsa7-">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.4ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:13:04.736451"], ["updated_at", "2022-07-19 18:13:04.736722"], ["id", 7]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 9114], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.3ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:13:04.745849"], ["updated_at", "2022-07-19 18:13:04.745849"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 2161], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-3@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-3@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:13:04.748837"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:13:04.748783"], ["updated_at", "2022-07-19 18:13:04.748783"], ["name", "user-name-3"], ["is_tenant", false], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 8], ["kylas_user_id", nil]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 0.3ms | Allocations: 141)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 1.5ms
+Delivered mail 62d6f430b7dbc_198c6279c4099f@shyam-selldo.mail (13.6ms)
+Date: Tue, 19 Jul 2022 23:43:04 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-3@sample.com
+Message-ID: <62d6f430b7dbc_198c6279c4099f@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-3!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-3!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-3@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=Ui5u2B7fJta1Yx8PkcyE">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:13:04.766110"], ["updated_at", "2022-07-19 18:13:04.766430"], ["id", 8]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.5ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:13:48.621981"], ["updated_at", "2022-07-19 18:13:48.621981"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 8983], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 1333], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.3ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.6ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-1@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:13:48.637267"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:13:48.637099"], ["updated_at", "2022-07-19 18:13:48.637099"], ["name", "user-name-1"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 9], ["kylas_user_id", 1333]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 2.3ms | Allocations: 1091)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 178.2ms
+Delivered mail 62d6f45cc920d_1999d279c806a1@shyam-selldo.mail (6.7ms)
+Date: Tue, 19 Jul 2022 23:43:48 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-1@sample.com
+Message-ID: <62d6f45cc920d_1999d279c806a1@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-1!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-1!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-1@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=sDrSMoVQKQofBrjaA7qe">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:13:48.827385"], ["updated_at", "2022-07-19 18:13:48.827753"], ["id", 9]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.3ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:13:48.834828"], ["updated_at", "2022-07-19 18:13:48.834828"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 8787], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-2@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 3242], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.2ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-2@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:13:48.841240"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:13:48.841183"], ["updated_at", "2022-07-19 18:13:48.841183"], ["name", "user-name-2"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 10], ["kylas_user_id", 3242]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 0.3ms | Allocations: 141)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 1.8ms
+Delivered mail 62d6f45cce7e6_1999d279c807cf@shyam-selldo.mail (2.1ms)
+Date: Tue, 19 Jul 2022 23:43:48 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-2@sample.com
+Message-ID: <62d6f45cce7e6_1999d279c807cf@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-2!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-2!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-2@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=cxcoQv48KtF5PaECV9eY">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:13:48.847347"], ["updated_at", "2022-07-19 18:13:48.847619"], ["id", 10]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 3242], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.3ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:13:48.856547"], ["updated_at", "2022-07-19 18:13:48.856547"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 2427], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-3@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.5ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-3@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:13:48.860138"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:13:48.860075"], ["updated_at", "2022-07-19 18:13:48.860075"], ["name", "user-name-3"], ["is_tenant", false], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 11], ["kylas_user_id", nil]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 0.3ms | Allocations: 141)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 1.5ms
+Delivered mail 62d6f45cd31ef_1999d279c8087a@shyam-selldo.mail (12.5ms)
+Date: Tue, 19 Jul 2022 23:43:48 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-3@sample.com
+Message-ID: <62d6f45cd31ef_1999d279c8087a@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-3!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-3!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-3@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=Hv3Cnvsxayifxfq-tAk1">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:13:48.876733"], ["updated_at", "2022-07-19 18:13:48.877074"], ["id", 11]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.5ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:15:11.856486"], ["updated_at", "2022-07-19 18:15:11.856486"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 4932], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 666], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.3ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 12], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.6ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-1@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:15:11.871862"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:15:11.871731"], ["updated_at", "2022-07-19 18:15:11.871731"], ["name", "user-name-1"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 12], ["kylas_user_id", 666]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 2.4ms | Allocations: 1091)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 176.7ms
+Delivered mail 62d6f4b0dd31_19ae4279c9446f@shyam-selldo.mail (6.6ms)
+Date: Tue, 19 Jul 2022 23:45:12 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-1@sample.com
+Message-ID: <62d6f4b0dd31_19ae4279c9446f@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-1!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-1!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-1@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=oJJyG4r3LM9cFE6zv5Ur">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:15:12.060200"], ["updated_at", "2022-07-19 18:15:12.060567"], ["id", 12]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.3ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:15:12.067924"], ["updated_at", "2022-07-19 18:15:12.067924"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 3019], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-2@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 4365], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.3ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 13], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-2@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:15:12.074066"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:15:12.074012"], ["updated_at", "2022-07-19 18:15:12.074012"], ["name", "user-name-2"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 13], ["kylas_user_id", 4365]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 0.3ms | Allocations: 141)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 1.4ms
+Delivered mail 62d6f4b01323d_19ae4279c9456@shyam-selldo.mail (2.1ms)
+Date: Tue, 19 Jul 2022 23:45:12 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-2@sample.com
+Message-ID: <62d6f4b01323d_19ae4279c9456@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-2!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-2!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-2@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=iTZx_Ltybf7r-Tz_thXs">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:15:12.079904"], ["updated_at", "2022-07-19 18:15:12.080152"], ["id", 13]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 4365], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:15:12.089134"], ["updated_at", "2022-07-19 18:15:12.089134"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 8512], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-3@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-3@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:15:12.092089"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:15:12.092039"], ["updated_at", "2022-07-19 18:15:12.092039"], ["name", "user-name-3"], ["is_tenant", false], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 14], ["kylas_user_id", nil]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 0.3ms | Allocations: 141)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 1.4ms
+Delivered mail 62d6f4b0177fb_19ae4279c9468d@shyam-selldo.mail (9.0ms)
+Date: Tue, 19 Jul 2022 23:45:12 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-3@sample.com
+Message-ID: <62d6f4b0177fb_19ae4279c9468d@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-3!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-3!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-3@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=8omsc6JxUZpuVUuDpFYu">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:15:12.104706"], ["updated_at", "2022-07-19 18:15:12.108438"], ["id", 14]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:15:12.180607"], ["updated_at", "2022-07-19 18:15:12.180607"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 4316], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-4@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 7818], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.3ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 15], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-4@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:15:12.190403"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:15:12.190153"], ["updated_at", "2022-07-19 18:15:12.190153"], ["name", "user-name-4"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 15], ["kylas_user_id", 7818]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 0.5ms | Allocations: 142)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 1.9ms
+Delivered mail 62d6f4b02fc6f_19ae4279c94729@shyam-selldo.mail (2.7ms)
+Date: Tue, 19 Jul 2022 23:45:12 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-4@sample.com
+Message-ID: <62d6f4b02fc6f_19ae4279c94729@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-4!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-4!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-4@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=EzyVssjjH6CRYjuvbNdu">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:15:12.197527"], ["updated_at", "2022-07-19 18:15:12.197982"], ["id", 15]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (1.0ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:16:36.989277"], ["updated_at", "2022-07-19 18:16:36.989277"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 9095], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (1.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 281], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.7ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 16], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (1.3ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-1@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:16:37.060533"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:16:37.060259"], ["updated_at", "2022-07-19 18:16:37.060259"], ["name", "user-name-1"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 16], ["kylas_user_id", 281]]
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 2.3ms | Allocations: 1092)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 179.8ms
+Delivered mail 62d6f50557b13_19be2279c37d0@shyam-selldo.mail (6.4ms)
+Date: Tue, 19 Jul 2022 23:46:37 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-1@sample.com
+Message-ID: <62d6f50557b13_19be2279c37d0@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-1!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-1!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-1@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=eJz-mmiFf2qd4YWd9Tbi">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:16:37.362657"], ["updated_at", "2022-07-19 18:16:37.363030"], ["id", 16]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 AND "kylas_engine_users"."id" != $2 LIMIT $3[0m  [["kylas_user_id", 281], ["id", 16], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Update (0.4ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "updated_at" = $1, "kylas_access_token_expires_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["updated_at", "2022-07-19 18:16:37.367390"], ["kylas_access_token_expires_at", "[FILTERED]"], ["id", 16]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:16:37.371897"], ["updated_at", "2022-07-19 18:16:37.371897"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 8859], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-2@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 454], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.2ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 17], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-2@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:16:37.378545"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:16:37.378488"], ["updated_at", "2022-07-19 18:16:37.378488"], ["name", "user-name-2"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 17], ["kylas_user_id", 454]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 0.3ms | Allocations: 141)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 1.5ms
+Delivered mail 62d6f5055d709_19be2279c3848@shyam-selldo.mail (2.0ms)
+Date: Tue, 19 Jul 2022 23:46:37 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-2@sample.com
+Message-ID: <62d6f5055d709_19be2279c3848@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-2!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-2!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-2@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=YuReRnqmhtk3p-vV_XbT">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.4ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:16:37.384195"], ["updated_at", "2022-07-19 18:16:37.384433"], ["id", 17]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 AND "kylas_engine_users"."id" != $2 LIMIT $3[0m  [["kylas_user_id", 454], ["id", 17], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Update (0.4ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "updated_at" = $1, "kylas_access_token_expires_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["updated_at", "2022-07-19 18:16:37.387767"], ["kylas_access_token_expires_at", "[FILTERED]"], ["id", 17]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "schema_sha1"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.8ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:18:16.222126"], ["updated_at", "2022-07-19 18:18:16.222126"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 5438], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (1.0ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-1@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 1326], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.5ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 18], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.9ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-1@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:18:16.274547"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:18:16.274334"], ["updated_at", "2022-07-19 18:18:16.274334"], ["name", "user-name-1"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 18], ["kylas_user_id", 1326]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 2.6ms | Allocations: 1092)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 177.1ms
+Delivered mail 62d6f56888a23_19d54279c19365@shyam-selldo.mail (6.6ms)
+Date: Tue, 19 Jul 2022 23:48:16 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-1@sample.com
+Message-ID: <62d6f56888a23_19d54279c19365@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-1!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-1!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-1@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=yeJtUutAD-nsLmwHyWQn">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:18:16.563220"], ["updated_at", "2022-07-19 18:18:16.563614"], ["id", 18]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::Tenant Create (0.4ms)[0m  [1m[32mINSERT INTO "kylas_engine_tenants" ("created_at", "updated_at", "kylas_api_key", "webhook_api_key", "kylas_tenant_id", "timezone") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["created_at", "2022-07-19 18:18:16.597244"], ["updated_at", "2022-07-19 18:18:16.597244"], ["kylas_api_key", "[FILTERED]"], ["webhook_api_key", "[FILTERED]"], ["kylas_tenant_id", 6694], ["timezone", "Asia/Calcutta"]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."email" = $1 LIMIT $2[0m  [["email", "user-email-2@sample.com"], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 LIMIT $2[0m  [["kylas_user_id", 4279], ["LIMIT", 1]]
+  [1m[36mKylasEngine::Tenant Load (0.3ms)[0m  [1m[34mSELECT "kylas_engine_tenants".* FROM "kylas_engine_tenants" WHERE "kylas_engine_tenants"."id" = $1 LIMIT $2[0m  [["id", 19], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Create (0.5ms)[0m  [1m[32mINSERT INTO "kylas_engine_users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "confirmation_token", "confirmed_at", "confirmation_sent_at", "unconfirmed_email", "created_at", "updated_at", "name", "is_tenant", "kylas_access_token", "kylas_refresh_token", "kylas_access_token_expires_at", "active", "tenant_id", "kylas_user_id") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING "id"[0m  [["email", "user-email-2@sample.com"], ["encrypted_password", "[FILTERED]"], ["reset_password_token", "[FILTERED]"], ["reset_password_sent_at", "[FILTERED]"], ["remember_created_at", nil], ["confirmation_token", "[FILTERED]"], ["confirmed_at", nil], ["confirmation_sent_at", "2022-07-19 18:18:16.604049"], ["unconfirmed_email", nil], ["created_at", "2022-07-19 18:18:16.603989"], ["updated_at", "2022-07-19 18:18:16.603989"], ["name", "user-name-2"], ["is_tenant", true], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["active", true], ["tenant_id", 19], ["kylas_user_id", 4279]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  Rendering /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb
+  Rendered /home/sif/rails_projects/company/kylas_engine/app/views/devise/mailer/confirmation_instructions.html.erb (Duration: 0.3ms | Allocations: 141)
+Devise::Mailer#confirmation_instructions: processed outbound mail in 1.5ms
+Delivered mail 62d6f5689491d_19d54279c194ec@shyam-selldo.mail (2.0ms)
+Date: Tue, 19 Jul 2022 23:48:16 +0530
+From: please-change-me-at-config-initializers-devise@example.com
+Reply-To: please-change-me-at-config-initializers-devise@example.com
+To: user-email-2@sample.com
+Message-ID: <62d6f5689491d_19d54279c194ec@shyam-selldo.mail>
+Subject: Confirmation instructions
+Mime-Version: 1.0
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<div class="mailer">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #ddd;background-color: #0177FF; border-collapse: collapse; font-family: 'Rubik', sans-serif;" width="600">
+    <tr>
+      <td align="center" style="padding: 4% 3% 4%;background-color: #0177FF;">
+        <img alt="sign in placeholder" class="sign-in__placeholder" src="https://assets.kylas.io/images/logo.png" style="outline: 0;padding: 0;" width="89px"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 2% 3%;">
+        <h1 style="font-size: 26px;line-height: 31px;color:#fff;margin: 0;pa  dding-bottom: 2%;font-weight: 500; color: white">Welcome to App, </h1>
+        <span id="email-id">user-name-2!</span>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 3% 3% 5%;background-color: #0177FF;">
+        <table border="0" cellpadding="0" cellspacing="0" style="background-color: #fff;border-radius: 5px;padding: 4% 3% 4%;box-shadow: 0px 3px 6px #00000029;" width="100%">
+          <tr>
+            <td align="center">
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Hi user-name-2!,
+              </p>
+              <br/>
+              <p style="margin: 0;font-size: 14px;line-height: 18px;font-weight: 400;">
+                Your email user-email-2@sample.com has been registered with us. Please verify your account by clicking on the link below
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 4% 0;">
+              <a style="font-weight: 500; text-decoration: none;display: inline-block;background-color:#0177FF;color: #fff;padding:10px 20px;font-size: 12px;line-height: 15px;border-radius: 5px;letter-spacing: 1.3px;" href="http://localhost:3000/kylas-engine/users/confirmation?confirmation_token=Uv81WTDNsi31doYKgByk">Verify</a>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" style="padding: 3% 3%; background-color: #fff;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" style="width:20%">
+              <img height="20px" src="https://assets.kylas.io/images/blue-logo.png" style="outline: 0;padding: 0;" width="72px"/>
+            </td>
+            <td align="right" style="width: 20%;">
+              <div style="margin: 1% 0 0;font-size: 10px;line-height: 12px;color: #8798AD;padding: 0 2%;text-align: right;">
+                <a href="https://support.kylas.io" style="color: #8798AD;margin: 0;text-decoration: none;padding-right: 2%;" target="_blank">Support</a>
+                |
+                <a href="https://www.kylas.io/privacy" style="color: #8798AD;margin: 0;text-decoration: none;padding-left: 2%;" target="_blank">
+                  Privacy
+                  policy
+                </a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Update (0.5ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "confirmed_at" = $1, "updated_at" = $2 WHERE "kylas_engine_users"."id" = $3[0m  [["confirmed_at", "2022-07-19 18:18:16.610009"], ["updated_at", "2022-07-19 18:18:16.610265"], ["id", 19]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mKylasEngine::User Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "kylas_engine_users" WHERE "kylas_engine_users"."kylas_user_id" = $1 AND "kylas_engine_users"."id" != $2 LIMIT $3[0m  [["kylas_user_id", 4279], ["id", 19], ["LIMIT", 1]]
+  [1m[36mKylasEngine::User Update (0.4ms)[0m  [1m[33mUPDATE "kylas_engine_users" SET "updated_at" = $1, "kylas_access_token" = $2, "kylas_refresh_token" = $3, "kylas_access_token_expires_at" = $4 WHERE "kylas_engine_users"."id" = $5[0m  [["updated_at", "2022-07-19 18:18:16.613891"], ["kylas_access_token", "[FILTERED]"], ["kylas_refresh_token", "[FILTERED]"], ["kylas_access_token_expires_at", "[FILTERED]"], ["id", 19]]
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK[0m

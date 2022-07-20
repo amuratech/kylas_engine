@@ -31,5 +31,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sassc-rails'
   spec.add_dependency 'sprockets-rails'
 
+  spec.add_development_dependency 'factory_bot_rails'
   spec.add_development_dependency 'rspec-rails', '~> 5.0.0'
 end

@@ -1,7 +1,9 @@
-require "bundler/setup"
+require 'bundler/setup'
 
-load "rails/tasks/engine.rake"
+APP_RAKEFILE = File.expand_path('spec/dummy/Rakefile', __dir__)
 
-load "rails/tasks/statistics.rake"
+load 'rails/tasks/engine.rake'
 
-require "bundler/gem_tasks"
+load 'rails/tasks/statistics.rake'
+
+require 'bundler/gem_tasks'
