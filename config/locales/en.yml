@@ -2,6 +2,7 @@ en:
   something_went_wrong: 'Something went wrong!'
   dont_have_permission: "You don't have permission to perform action."
   save: 'Save'
+  logout: 'Logout'
   users:
     deactivated_user_log_in_message: 'Sorry, this account has been deactivated.'
   kylas_auth:
@@ -17,3 +18,5 @@ en:
     webhook_api_key_help_text: 'You can use this API Key for your Webhooks in Kylas'
     kylas_api_key_label: 'Kylas API Key'
     kylas_api_key_placeholder: 'Kylas API Key'
+    kylas_api_key_navbar_placeholder: 'API Keys'
+    help_navbar_placeholder: 'Help'

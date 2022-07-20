@@ -6,13 +6,13 @@
           <% if (tenant = current_tenant) %>
             <li class='nav-item <%= active_class('tenants') %>'>
               <div class='left-navbar__side-nav__item-section'>
-                <%= link_to 'API Keys', edit_tenant_path(tenant), class: 'nav-link pl-0' %>
+                <%= link_to t('tenants.kylas_api_key_navbar_placeholder'), edit_tenant_path(tenant), class: 'nav-link pl-0' %>
               </div>
             </li>
           <% end %>
           <li class='nav-item <%= active_class('dashboards') %>'>
             <div class='left-navbar__side-nav__item-section'>
-              <%= link_to 'Help', dashboard_help_path, class: 'nav-link pl-0' %>
+              <%= link_to t('tenants.help_navbar_placeholder'), dashboard_help_path, class: 'nav-link pl-0' %>
             </div>
           </li>
         </ul>
@@ -23,7 +23,7 @@
             <%= create_avatar_name %>
           </button>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
-            <%= link_to 'Logout', destroy_user_session_path, { method: :delete, class: 'dropdown-item cursor-pointer' } %>
+            <%= link_to t('logout'), destroy_user_session_path, { method: :delete, class: 'dropdown-item cursor-pointer' } %>
           </ul>
         </div>
       </div>
