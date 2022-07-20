@@ -19,5 +19,14 @@ module KylasEngine
     def after_sign_out_path_for(resource)
       "/kylas-engine#{new_user_session_path}"
     end
+
+    private
+
+    def authenticate_tenant
+      return true if current_user.is_tenant?
+
+      flash[:alert] = t('dont_have_permission')
+      redirect_to dashboard_help_path
+    end
   end
 end
