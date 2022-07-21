@@ -1,0 +1,7 @@
+{
+  "access_token": "fd4e1d45-ee00-449c-833a-a339acbeb2f7:123122:124122",
+  "token_type": "bearer",
+  "refresh_token": "3b504775-b06f-4ab8-a116-f6f1cbac564e:123122:124122",
+  "expires_in": 86399,
+  "scope": "company:read note:read shareRule:read export:readAll lead:read lead-capture-forms:read config:read company:readAll contact:read email_template:read task:read products-services:read dashboard:read user:read report:read conversionMapping:read searchList:read deal:read customField:read profile:read team:read availability:read pipeline:read layout:read export:updateAll"
+}

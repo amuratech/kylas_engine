@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
+require 'simplecov'
+SimpleCov.start 'rails' do
+  enable_coverage :branch
+  add_group 'Models', 'app/models'
+  add_group 'Controllers', 'app/controllers'
+  add_group 'Services', 'app/services'
+end
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
@@ -10,6 +18,8 @@ require_relative 'dummy/config/environment'
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 require 'factory_bot_rails'
+require 'pry'
+require 'support/kylas_engine/devise_request_spec_helpers'
 
 ActiveRecord::Migrator.migrations_paths = File.join(File.join(File.dirname(__FILE__), '../'), 'spec/dummy/db/migrate')
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -40,12 +50,15 @@ end
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.file_fixture_path = 'spec/fixtures/files/kylas_engine'
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
   config.include FactoryBot::Syntax::Methods
+  config.include KylasEngine::DeviseRequestSpecHelpers, type: :request
+  config.include Rails.application.routes.url_helpers
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
@@ -67,6 +80,18 @@ RSpec.configure do |config|
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
+
+  KylasEngine::Context.setup(
+    client_id: SecureRandom.uuid,
+    client_secret: SecureRandom.uuid,
+    redirect_uri: 'http://localhost:3000/kylas-engine/kylas-auth',
+    kylas_host: 'https://api-qa.sling-dev.com'
+  )
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+end
+
+def encoded_credentials
+  cred = "#{KylasEngine::KYLAS_AUTH_CONFIG[:client_id]}:#{KylasEngine::KYLAS_AUTH_CONFIG[:client_secret]}"
+  Base64.encode64(cred).gsub("\n", '')
 end
