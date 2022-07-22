@@ -9,7 +9,7 @@ module KylasEngine
     end
 
     def call
-      return { success: false } if kylas_refresh_token.blank?
+      return { success: false } if @kylas_refresh_token.blank?
 
       url = URI("#{KylasEngine::KYLAS_AUTH_CONFIG[:kylas_host]}/oauth/token")
       https = Net::HTTP.new(url.host, url.port)

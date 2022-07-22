@@ -32,5 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sprockets-rails'
 
   spec.add_development_dependency 'factory_bot_rails'
+  spec.add_development_dependency 'pry', '~> 0.13.1'
   spec.add_development_dependency 'rspec-rails', '~> 5.0.0'
+  spec.add_development_dependency 'webmock'
 end

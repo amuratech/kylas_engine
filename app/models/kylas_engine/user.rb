@@ -5,7 +5,7 @@ module KylasEngine
     devise :database_authenticatable, :registerable,
            :recoverable, :rememberable, :validatable, :confirmable
 
-    attr_accessor :create_tenant, :skip_password_validation
+    attr_accessor :create_tenant
 
     # validations
     validates :name, presence: true
@@ -61,21 +61,6 @@ module KylasEngine
       (kylas_access_token_expires_at.to_i > DateTime.now.to_i)
     end
 
-    def password_match?
-      errors[:password] << I18n.t('errors.messages.blank') if password.blank?
-      errors[:password_confirmation] << I18n.t('errors.messages.blank') if password_confirmation.blank?
-      if password != password_confirmation
-        errors[:password_confirmation] << I18n.translate('errors.messages.confirmation', attribute: 'password')
-      end
-      password == password_confirmation && !password.blank?
-    end
-
-    # Devise::Models:unless_confirmed` method doesn't exist in Devise 2.0.0 anymore.
-    # Instead you should use `pending_any_confirmation`.
-    def only_if_unconfirmed
-      pending_any_confirmation { yield }
-    end
-
     # Checks if the user is active or not before log in
     def active_for_authentication?
       super && active?
@@ -94,14 +79,6 @@ module KylasEngine
     # Activates the user
     def activate
       update(active: true)
-    end
-
-    protected
-
-    def password_required?
-      return false if skip_password_validation
-
-      super
     end
 
     private

@@ -13,11 +13,11 @@ module KylasEngine
     def after_sign_in_path_for(resource)
       return session.delete(:previous_url) if session[:previous_url].present?
 
-      "/kylas-engine#{dashboard_help_path}"
+      "#{kylas_engine_path}#{dashboard_help_path}"
     end
 
     def after_sign_out_path_for(resource)
-      "/kylas-engine#{new_user_session_path}"
+      "#{kylas_engine_path}#{new_user_session_path}"
     end
 
     private
