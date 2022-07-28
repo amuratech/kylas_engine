@@ -32,7 +32,7 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def after_inactive_sign_up_path_for(resource)
-    "#{kylas_engine_path}#{new_user_session_path}"
+    kylas_engine.new_user_session_path
   end
 
   alias after_sign_up_path_for after_inactive_sign_up_path_for

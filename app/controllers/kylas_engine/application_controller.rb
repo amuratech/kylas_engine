@@ -13,11 +13,11 @@ module KylasEngine
     def after_sign_in_path_for(resource)
       return session.delete(:previous_url) if session[:previous_url].present?
 
-      "#{kylas_engine_path}#{dashboard_help_path}"
+      custom_dashboard_path
     end
 
     def after_sign_out_path_for(resource)
-      "#{kylas_engine_path}#{new_user_session_path}"
+      kylas_engine.new_user_session_path
     end
 
     private
@@ -26,7 +26,13 @@ module KylasEngine
       return true if current_user.is_tenant?
 
       flash[:alert] = t('dont_have_permission')
-      redirect_to dashboard_help_path
+      redirect_to custom_dashboard_path
+    end
+
+    def custom_dashboard_path
+      Rails.application.routes.url_helpers.root_path
+    rescue NoMethodError
+      kylas_engine.dashboard_help_path
     end
   end
 end
