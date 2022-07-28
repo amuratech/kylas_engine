@@ -23,7 +23,7 @@ module KylasEngine
         flash[:alert] = t('something_went_wrong')
       end
 
-      redirect_to dashboard_help_path
+      redirect_to custom_dashboard_path
     end
 
     private
@@ -33,7 +33,7 @@ module KylasEngine
     end
 
     def auth_request?(url)
-      url&.include?('kylas-engine/kylas-auth?code=')
+      url&.include?('/kylas-auth?code=')
     end
   end
 end
