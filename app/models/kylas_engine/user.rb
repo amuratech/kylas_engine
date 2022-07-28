@@ -17,6 +17,9 @@ module KylasEngine
     # callbacks
     before_validation :create_tenant!
 
+    # Encryption
+    encrypts :kylas_access_token, :kylas_refresh_token
+
     # new function to return whether a password has been set
     def has_no_password?
       encrypted_password.blank?
