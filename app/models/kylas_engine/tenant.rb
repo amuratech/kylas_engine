@@ -2,6 +2,9 @@
 
 module KylasEngine
   class Tenant < ApplicationRecord
+    # Encryption
+    encrypts :kylas_api_key, :webhook_api_key, deterministic: true
+
     # associations
     has_many :users
 
