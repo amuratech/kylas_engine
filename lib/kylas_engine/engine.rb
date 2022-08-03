@@ -11,5 +11,7 @@ module KylasEngine
       g.fixture_replacement :factory_bot
       g.factory_bot dir: 'spec/factories/kylas_engine'
     end
+
+    config.assets.precompile += %w[kylas_engine/application.css kylas_engine/application.js]
   end
 end
