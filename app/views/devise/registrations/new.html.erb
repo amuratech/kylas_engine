@@ -13,7 +13,7 @@
         <%= render 'devise/shared/flash' %>
         <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: {id: 'signUpForm'}) do |f| %>
           <div class='form-group'>
-            <%= f.label 'Name', :input_html => { :class => 'form-label' } %>
+            <%= f.label 'Name', input_html: { class: 'form-label' } %>
             <div class='text-field col-undefined'>
               <div class='form-group' id='lastName'>
                 <div class='validate'>
@@ -48,7 +48,7 @@
           <% end %>
 
           <div class='form-group'>
-            <%= f.label 'Password', :input_html => { :class => 'form-label' } %>
+            <%= f.label 'Password', input_html: { class: 'form-label' } %>
             <div class='text-field col-undefined'>
               <div class='form-group' id='password'>
                 <div class='validate'>
