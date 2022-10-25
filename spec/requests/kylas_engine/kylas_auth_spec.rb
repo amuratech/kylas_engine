@@ -42,7 +42,7 @@ RSpec.describe KylasEngine::KylasAuthController, type: :request do
 
           it 'should redirect to root path with alert message' do
             authenticate_request
-            expect(response).to redirect_to('/kylas-engine/dashboard/help')
+            expect(response).to redirect_to(Rails.application.routes.url_helpers.root_path)
             expect(flash[:alert]).to eq('Something went wrong!')
           end
         end
@@ -70,7 +70,7 @@ RSpec.describe KylasEngine::KylasAuthController, type: :request do
 
             it 'redirects to root path with alert message' do
               authenticate_request(params: { code: 'ySzLAa' })
-              expect(response).to redirect_to('/kylas-engine/dashboard/help')
+              expect(response).to redirect_to(Rails.application.routes.url_helpers.root_path)
               expect(flash[:alert]).to eq('We are facing problem while installing app! Please try again')
             end
           end
@@ -101,7 +101,7 @@ RSpec.describe KylasEngine::KylasAuthController, type: :request do
 
               it 'update the user with tokens' do
                 authenticate_request(params: { code: 'ySzLAa' })
-                expect(response).to redirect_to('/kylas-engine/dashboard/help')
+                expect(response).to redirect_to(Rails.application.routes.url_helpers.root_path)
                 expect(flash[:success]).to eq('Application installed successfully.')
 
                 parsed_oauth_response = JSON.parse(oauth_stub_response)
