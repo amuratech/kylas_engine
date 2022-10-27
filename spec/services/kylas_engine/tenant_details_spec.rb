@@ -55,7 +55,7 @@ RSpec.describe KylasEngine::TenantDetails, type: :feature do
 
     context 'when api key is not present' do
       it 'returns success false message' do
-        expect(service.fetch_details_using_api_key(new_kylas_api_key: nil)).to eq(
+        expect(service.fetch_details_using_api_key(new_kylas_api_key: nil, tenant: tenant)).to eq(
           { success: false, message: I18n.t('tenants.blank_api_key') }
         )
       end
@@ -65,7 +65,7 @@ RSpec.describe KylasEngine::TenantDetails, type: :feature do
       context 'when API returns 200 response code' do
         it 'returns success true response with data' do
           stub_fetch_tenant_details_request(response: tenant_stub_response)
-          expect(service.fetch_details_using_api_key(new_kylas_api_key: tenant.kylas_api_key)).to eq(
+          expect(service.fetch_details_using_api_key(new_kylas_api_key: tenant.kylas_api_key, tenant: tenant)).to eq(
             { success: true, data: JSON.parse(tenant_stub_response) }
           )
         end
@@ -75,7 +75,7 @@ RSpec.describe KylasEngine::TenantDetails, type: :feature do
         it 'returns success false response with correct error message' do
           response = { error_code: '101', message: 'Invalid API key' }.to_json
           stub_fetch_tenant_details_request(status: 400, response: response)
-          expect(service.fetch_details_using_api_key(new_kylas_api_key: tenant.kylas_api_key)).to eq(
+          expect(service.fetch_details_using_api_key(new_kylas_api_key: tenant.kylas_api_key, tenant: tenant)).to eq(
             { success: false, message: 'Invalid API key' }
           )
         end
@@ -84,7 +84,7 @@ RSpec.describe KylasEngine::TenantDetails, type: :feature do
       context 'when API returns 500 response code' do
         it 'returns success false response with correct error message' do
           stub_fetch_tenant_details_request(status: 500)
-          expect(service.fetch_details_using_api_key(new_kylas_api_key: tenant.kylas_api_key)).to eq(
+          expect(service.fetch_details_using_api_key(new_kylas_api_key: tenant.kylas_api_key, tenant: tenant)).to eq(
             { success: false, message: I18n.t('something_went_wrong') }
           )
         end

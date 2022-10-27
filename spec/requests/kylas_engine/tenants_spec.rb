@@ -48,7 +48,8 @@ RSpec.describe KylasEngine::TenantsController, type: :request do
     def stub_fetch_tenant_details_request(request_headers: nil, status: 200, response: {}.to_json)
       headers = {
         'Content-Type' => 'application/json',
-        'api-key' => tenant.kylas_api_key
+        'api-key' => tenant.kylas_api_key,
+        'User-Agent' => KylasEngine::KylasUserAgent.new(tenant: tenant, agent_type: 'api_key').get_agent
       }
       stub_request(:get, "#{KylasEngine::KYLAS_AUTH_CONFIG[:kylas_host]}/v1/tenants")
         .with(headers: request_headers || headers)

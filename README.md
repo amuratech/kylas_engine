@@ -28,6 +28,7 @@ KylasEngine::Context.setup(
   client_secret: 'Paste client secret generated for Marketplace app here',
   redirect_uri: 'Enter redirect uri that you have used while creating marketplace app',
   kylas_host: 'Enter Kylas host here'
+  app_id: 'Enter marketplace app id here'
 )
 ```
 
@@ -38,6 +39,15 @@ mount KylasEngine::Engine, at: '/kylas-engine'
 authenticated :user do
   root 'enter URL here on which user will be redirected after logged in'
 end
+```
+
+Copy migration from kylas engine to your app
+```ruby
+bin/rails kylas_engine:install:migrations
+```
+Then run migrations
+```ruby
+bin/rails db:migrate
 ```
 
 In your environments file (Based on your requirements),
@@ -53,6 +63,32 @@ $ bin/rails db:encryption:init
 In your app/assets/config/manifest.js, this will be used for precompiling assets
 ```js
 //= link kylas_engine_manifest.js
+```
+
+If you want to override any models or controllers then you can create such files in ```app/overrides```
+```ruby
+# config/application.rb
+module YourApp
+  class Application < Rails::Application
+    overrides = "#{Rails.root}/app/overrides"
+    Rails.autoloaders.main.ignore(overrides)
+
+    config.to_prepare do
+      Dir.glob("#{overrides}/**/*_override.rb").each do |override|
+        load override
+      end
+    end
+  end
+end
+```
+
+For e.g.
+For opening kylas_engine's user model
+```ruby
+# YourApp/app/overrides/models/kylas_engine/user_override.rb
+KylasEngine::User.class_eval do
+  # Add code here
+end
 ```
 
 ## Contributing

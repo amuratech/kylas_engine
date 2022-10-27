@@ -35,7 +35,7 @@ module KylasEngine
     #
     # @return [Object] Response
     #
-    def fetch_details_using_api_key(new_kylas_api_key:)
+    def fetch_details_using_api_key(new_kylas_api_key:, tenant:)
       return { success: false, message: I18n.t('tenants.blank_api_key') } if new_kylas_api_key.blank?
 
       url = URI("#{KylasEngine::KYLAS_AUTH_CONFIG[:kylas_host]}/v1/tenants")
@@ -43,6 +43,7 @@ module KylasEngine
       https.use_ssl = true
       request = Net::HTTP::Get.new(url)
       request['Content-Type'] = 'application/json'
+      request['User-Agent'] = KylasEngine::KylasUserAgent.new(tenant: tenant, agent_type: 'api_key').get_agent
       request['api-key'] = new_kylas_api_key
 
       response = https.request(request)

@@ -42,7 +42,7 @@ module KylasEngine
       update_users_and_tenants_details
 
       response = KylasEngine::TenantDetails.new(user: current_user)
-                                           .fetch_details_using_api_key(new_kylas_api_key: params.dig(:tenant, :kylas_api_key))
+                                           .fetch_details_using_api_key(new_kylas_api_key: params.dig(:tenant, :kylas_api_key), tenant: current_tenant)
 
       if response[:success] && response.dig(:data, 'id') == current_tenant.kylas_tenant_id.to_i
         true
