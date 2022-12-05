@@ -12,7 +12,7 @@ en:
     code_blank: 'Authorization code is blank.'
   tenants:
     api_key_updated: 'Kylas API key updated successfully.'
-    failed_to_update: 'Kylas API key failed to update.'
+    failed_to_update: 'Failed to update Kylas API key.'
     generate_webhook_api_key: 'We generate webhook api key which can be use for your webhooks in Kylas. Please add Kylas API Key.'
     ask_tenant_to_add_api_key: "Tenant didn't add the Kylas API Key yet. Ask to tenant!"
     webhook_api_key_label: 'App API Key'
@@ -20,3 +20,6 @@ en:
     kylas_api_key_label: 'Kylas API Key'
     kylas_api_key_placeholder: 'Kylas API Key'
     kylas_api_key_navbar_placeholder: 'API Keys'
+    invalid_api_key: 'Please enter correct API key.'
+    blank_api_key: 'Missing API key'
+

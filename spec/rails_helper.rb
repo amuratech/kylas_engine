@@ -85,7 +85,8 @@ RSpec.configure do |config|
     client_id: SecureRandom.uuid,
     client_secret: SecureRandom.uuid,
     redirect_uri: 'http://localhost:3000/kylas-engine/kylas-auth',
-    kylas_host: 'https://api-qa.sling-dev.com'
+    kylas_host: 'https://api-qa.sling-dev.com',
+    app_id: '196d4a9f-8918-400f-85af-ce3b30df4f2d'
   )
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
