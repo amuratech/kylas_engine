@@ -13,24 +13,7 @@
         <%= render 'devise/shared/flash' %>
         <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: {id: 'signUpForm'}) do |f| %>
           <div class='form-group'>
-            <%= f.label 'Email ID', input_html: { class: 'form-label' } %>
-            <div class='text-field col-undefined'>
-              <div class='form-group' id='email'>
-                <div class='validate'>
-                  <%= f.email_field :email, autocomplete: 'off', placeholder: 'Email', id: 'input_email', class: 'form-control' %>
-                </div>
-              </div>
-            </div>
-          </div>
-          <% if resource.errors.any? && resource.errors.messages[:email].any? %>
-            <span class='error'>
-              Email
-              <%= resource.errors.messages[:email][0] %>
-            </span>
-          <% end %>
-
-          <div class='form-group'>
-            <%= f.label 'Name', :input_html => { :class => 'form-label' } %>
+            <%= f.label 'Name', input_html: { class: 'form-label' } %>
             <div class='text-field col-undefined'>
               <div class='form-group' id='lastName'>
                 <div class='validate'>
@@ -48,7 +31,24 @@
           <% end %>
 
           <div class='form-group'>
-            <%= f.label 'Password', :input_html => { :class => 'form-label' } %>
+            <%= f.label 'Email ID', input_html: { class: 'form-label' } %>
+            <div class='text-field col-undefined'>
+              <div class='form-group' id='email'>
+                <div class='validate'>
+                  <%= f.email_field :email, autocomplete: 'off', placeholder: 'Email', id: 'input_email', class: 'form-control' %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% if resource.errors.any? && resource.errors.messages[:email].any? %>
+            <span class='error'>
+              Email
+              <%= resource.errors.messages[:email][0] %>
+            </span>
+          <% end %>
+
+          <div class='form-group'>
+            <%= f.label 'Password', input_html: { class: 'form-label' } %>
             <div class='text-field col-undefined'>
               <div class='form-group' id='password'>
                 <div class='validate'>
