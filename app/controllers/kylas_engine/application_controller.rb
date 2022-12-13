@@ -22,10 +22,9 @@ module KylasEngine
 
     def store_location
       if session[:previous_url].blank? || session[:previous_url] == '/'
-        session[:previous_url] = request.fullpath
         session[:previous_url] = request.fullpath if request.fullpath.include? 'code'
       end
-      return session[:previous_url]
+      session[:previous_url]
     end
 
     def current_tenant
