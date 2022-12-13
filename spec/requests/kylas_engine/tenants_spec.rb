@@ -4,36 +4,51 @@ require 'rails_helper'
 
 RSpec.describe KylasEngine::TenantsController, type: :request do
   let(:tenant) { create(:tenant, kylas_tenant_id: 1) }
-  let(:user) { create(:user, tenant_id: tenant.id) }
+  let(:user) { create(:user, :kylas_tokens, tenant_id: tenant.id) }
   let(:tenant_user) { create(:user, tenant_id: tenant.id, is_tenant: true) }
   let(:tenant_stub_response) { JSON.parse(file_fixture('kylas_tenant_details.json').read) }
 
   describe '#edit' do
-    subject { get "/kylas-engine/tenants/#{tenant.id}/edit" }
 
-    context 'when user is not signed in' do
+    context "when user's tenant id from parameter does not match" do
+      subject { get "/kylas-engine/tenants/#{tenant.id}/edit?tenantId=1111&userId=1111" }
+
       it 'redirects to root path with appropriate alert message' do
-        expect(subject).to redirect_to(kylas_engine.new_user_session_path)
-        expect(flash[:alert]).to eq('You need to sign in or sign up before continuing.')
+        execute_with_resource_sign_in(user) do
+          subject
+          expect(subject).to redirect_to(kylas_engine.new_user_session_path)
+          expect(flash[:danger]).to eq('Signed out because your kylas user and marketplace app user mismatched')
+        end
       end
     end
 
-    context 'when user is signed in' do
-      context 'when logged in user is not tenant user' do
-        it 'redirects to the root path of the application' do
-          execute_with_resource_sign_in(user) do
-            subject
-            expect(response).to redirect_to(Rails.application.routes.url_helpers.root_path)
-          end
+    context "when user's tenant id from parameter matches" do
+      subject { get "/kylas-engine/tenants/#{tenant.id}/edit?tenantId=#{user.tenant.kylas_tenant_id}&userId=#{user.kylas_user_id}" }
+
+      context 'when user is not signed in' do
+        it 'redirects to root path with appropriate alert message' do
+          expect(subject).to redirect_to(kylas_engine.new_user_session_path)
+          expect(flash[:alert]).to eq('You need to sign in or sign up before continuing.')
         end
       end
 
-      context 'when logged in user is tenant user' do
-        it 'renders correct template' do
-          user.is_tenant = true
-          execute_with_resource_sign_in(user) do
-            subject
-            expect(response).to have_http_status(200)
+      context 'when user is signed in' do
+        context 'when logged in user is not tenant user' do
+          it 'redirects to the root path of the application' do
+            execute_with_resource_sign_in(user) do
+              subject
+              expect(response).to redirect_to(Rails.application.routes.url_helpers.root_path)
+            end
+          end
+        end
+
+        context 'when logged in user is tenant user' do
+          it 'renders correct template' do
+            user.is_tenant = true
+            execute_with_resource_sign_in(user) do
+              subject
+              expect(response).to have_http_status(200)
+            end
           end
         end
       end
