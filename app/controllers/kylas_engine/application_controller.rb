@@ -14,8 +14,13 @@ module KylasEngine
       return true if current_user.blank?
 
       if((session[:userId] && current_user.kylas_user_id != session[:userId].to_i) || (session[:tenantId] && current_user.tenant.kylas_tenant_id != session[:tenantId].to_i))
-        flash.clear
-        flash.keep[:danger] = 'Signed out because your kylas user and marketplace app user mismatched'
+        if current_user.kylas_user_id.blank?
+          flash.clear
+          flash.keep[:danger] = t('application_reinstall_message')
+        else
+          flash.clear
+          flash.keep[:danger] = t('credentials_mismatch_message')
+        end
         sign_out(current_user)
       end
     end
