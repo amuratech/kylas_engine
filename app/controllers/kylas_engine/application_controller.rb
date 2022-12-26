@@ -10,7 +10,10 @@ module KylasEngine
       session[:tenantId] = params[:tenantId] if params[:tenantId]
       session[:userId] = params[:userId] if params[:userId]
 
+      return if EXCEPT_CONTROLLER.include?(params[:controller])
+
       return true if session[:tenantId].blank? && session[:userId].blank?
+      
       return true if current_user.blank?
 
       if((session[:userId] && current_user.kylas_user_id != session[:userId].to_i) || (session[:tenantId] && current_user.tenant.kylas_tenant_id != session[:tenantId].to_i))
