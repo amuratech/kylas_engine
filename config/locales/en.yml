@@ -1,4 +1,6 @@
 en:
+  application_reinstall_message: 'Application is not installed properly, Please reinstall the application.'
+  credentials_mismatch_message: 'Signed out because your kylas user and marketplace app user mismatched'
   something_went_wrong: 'Something went wrong!'
   dont_have_permission: "You don't have permission to perform action."
   save: 'Save'
