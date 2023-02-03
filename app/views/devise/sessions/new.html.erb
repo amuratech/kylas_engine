@@ -35,11 +35,13 @@
           <% end %>
           <div class='form-group'>
             <%= f.label 'Password', :input_html => { :class => 'form-label' } %>
-            <div class='text-field col-undefined'>
-              <div class='form-group' id='password'>
-                <div class='validate'>
-                  <%= f.password_field :password, autocomplete: 'current-password', placeholder: 'Password', id: 'input_password', class: 'form-control form-control--password' %>
-                </div>
+            <div class='input-group flex' id='password'>
+              <div class='validate' style="flex: auto;">
+                <%= f.password_field :password, autocomplete: 'current-password', placeholder: 'Password', id: 'input_password', class: 'form-control form-control--password' %>
+              </div>
+              <div class="input-group-append">
+                <span toggle=".form-control--password" class="input-group-text toggle-password fa fa-fw fa-eye-slash field-icon pe-4 cursor-pointer" style='background-color: #e8f0fe;border-left: none; line-height: 1.5rem'>
+                </span>
               </div>
             </div>
           </div>
@@ -90,6 +92,16 @@
         'user[email]': 'Please enter valid email',
         'user[password]': 'Please enter password'
       }
-    })
+    });
+
+    $(".toggle-password").click(function() {
+      $(this).toggleClass("fa-eye-slash fa-eye");
+      var input = $($(this).attr("toggle"));
+      if (input.attr("type") == "password") {
+        input.attr("type", "text");
+      } else {
+        input.attr("type", "password");
+      }
+    });
   })
 </script>
