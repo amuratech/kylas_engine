@@ -22,3 +22,13 @@ body {
   outline: 0;
   box-shadow: none;
 }
+
+.form-control--password {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.toggle-password {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
