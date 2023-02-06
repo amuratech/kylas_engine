@@ -13,7 +13,7 @@
             <%= f.label 'New Password', :input_html => { :class => 'form-label' } %>
             <div class='text-field col-undefined'>
               <div class='input-group flex'>
-                <div class='validate' style="flex: auto;">
+                <div class='validate password-box'>
                   <%= f.password_field :password, autocomplete: 'current-password', placeholder: 'Password', id: 'password', class: 'form-control form-control--password' %>
                 </div>
                 <div class="input-group-append">
@@ -33,7 +33,7 @@
             <%= f.label 'Confirm Password', :input_html => { :class => 'form-label' } %>
             <div class='text-field col-undefined'>
               <div class='input-group flex' id='password'>
-                <div class='validate' style="flex: auto;">
+                <div class='validate password-box'>
                   <%= f.password_field :password_confirmation, autocomplete: 'current-password', placeholder: 'Password', id: 'input_reTypePassword', class: 'form-control form-control--password' %>
                 </div>
                 <div class="input-group-append">
