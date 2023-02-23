@@ -47,7 +47,7 @@ module KylasEngine
       if response[:success] && response.dig(:data, 'id') == current_tenant.kylas_tenant_id.to_i
         true
       else
-        flash[:danger] = response[:message] || t('tenants.invalid_api_key')
+        flash[:danger] = response[:message] || t('tenants.please_install_application')
         redirect_to edit_tenant_path(current_tenant) and return false
       end
     end
