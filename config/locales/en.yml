@@ -24,4 +24,4 @@ en:
     kylas_api_key_navbar_placeholder: 'API Keys'
     invalid_api_key: 'Please enter correct API key.'
     blank_api_key: 'Missing API key'
-
+    please_install_application: 'User not found, please install the app on your Kylas account and try entering the API key'
