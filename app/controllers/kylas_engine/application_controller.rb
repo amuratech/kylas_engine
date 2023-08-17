@@ -13,7 +13,7 @@ module KylasEngine
       return if EXCEPT_CONTROLLER.include?(params[:controller])
 
       return true if session[:tenantId].blank? && session[:userId].blank?
-      
+
       return true if current_user.blank?
 
       if((session[:userId] && current_user.kylas_user_id != session[:userId].to_i) || (session[:tenantId] && current_user.tenant.kylas_tenant_id != session[:tenantId].to_i))
@@ -32,6 +32,11 @@ module KylasEngine
       if session[:previous_url].blank? || session[:previous_url] == '/'
         session[:previous_url] = request.fullpath if request.fullpath.include? 'code'
       end
+
+      if session[:target_url].blank? || session[:target_url] == '/users/sign_in' || session[:target_url] == '/'
+        session[:target_url] = request.fullpath
+      end
+
       session[:previous_url]
     end
 
@@ -46,13 +51,16 @@ module KylasEngine
         session[:tenantId] = nil
         session[:userId] = nil
       end
+
       return session.delete(:previous_url) if session[:previous_url].present?
+      return session.delete(:target_url) if session[:target_url].present?
 
       custom_dashboard_path
     end
 
     def after_sign_out_path_for(resource)
       session[:previous_url] = nil
+      session[:target_url] = nil
 
       kylas_engine.new_user_session_path
     end
